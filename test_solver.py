@@ -3,7 +3,7 @@ import pytest
 from solver import AssemblyLine, System
 
 
-class TestPathChecker:
+class TestPathValidator:
 	def test_system_single_line_with_consecutive_nodes(self):
 		a = AssemblyLine(name='A', nodes=3)
 		path = [a[0], a[1], a[2]]
