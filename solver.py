@@ -7,7 +7,7 @@ class AssemblyLine:
 		if 0 <= index < self.nodes:
 			return f'{self.name}_{index}'
 		else:
-			raise IndexError(f'Expected indices: [0, {self.nodes - 1}]; got {index}')
+			raise IndexError(f'Expected indices for {self.name}: [0, {self.nodes - 1}]; got {index}')
 
 
 def _are_consecutive(numbers: list[int]) -> bool:
@@ -28,6 +28,22 @@ class System:
 	def __init__(self, assembly_lines: list[AssemblyLine]) -> None:
 		self.assembly_lines = assembly_lines
 
+		if not self._are_lines_of_the_same_length():
+			raise DifferentNumberOfNodesError
+
+	def _are_lines_of_the_same_length(self):
+		if self.assembly_lines == []:
+			return True
+
+		previous_line = self.assembly_lines[0]
+		for line in self.assembly_lines[1:]:
+			if line.nodes != previous_line.nodes:
+				return False
+			# Defer:
+			previous_line = line
+
+		return True
+
 	def is_valid(self, path: list[str]) -> bool:
 		indices = []
 		for string in path:
@@ -40,3 +56,7 @@ class System:
 			return True
 		else:
 			return False
+
+
+class DifferentNumberOfNodesError(Exception):
+	pass

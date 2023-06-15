@@ -1,6 +1,6 @@
 import pytest
 
-from solver import AssemblyLine, System
+from solver import AssemblyLine, System, DifferentNumberOfNodesError
 
 
 class TestPathValidator:
@@ -60,3 +60,11 @@ class TestPathValidator:
 			path = [a[0], b[1], b[2], a[3]]
 
 			assert system.is_valid(path)
+
+		def test_if_number_of_nodes_match(self):
+			a = AssemblyLine(name='A', nodes=4)
+			b = AssemblyLine(name='B', nodes=6)
+
+			with pytest.raises(DifferentNumberOfNodesError):
+				system = System(assembly_lines=[a, b])
+
