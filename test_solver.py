@@ -4,12 +4,19 @@ from solver import AssemblyLine, System
 
 
 class TestPathChecker:
-	def test_system_single_line(self):
+	def test_system_single_line_with_consecutive_nodes(self):
 		a = AssemblyLine(name='A', nodes=3)
 		path = [a[0], a[1], a[2]]
 		system = System(assembly_lines=[a])
 
 		assert system.is_valid(path)
+
+	def test_system_single_line_with_nodes_in_reverse_order(self):
+		a = AssemblyLine(name='A', nodes=3)
+		path = [a[2], a[1], a[0]]
+		system = System(assembly_lines=[a])
+
+		assert not system.is_valid(path)
 
 	def test_raising_error_when_invalid_subscript(self):
 		a = AssemblyLine(name='A', nodes=3)
