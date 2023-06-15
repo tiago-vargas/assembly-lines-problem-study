@@ -1,3 +1,5 @@
+import pytest
+
 from solver import AssemblyLine, System
 
 
@@ -8,3 +10,9 @@ class TestPathChecker:
 		system = System(assembly_lines=[a])
 
 		assert system.is_valid(path)
+
+	def test_raising_error_when_invalid_subscript(self):
+		a = AssemblyLine(name='A', n=3)
+
+		with pytest.raises(IndexError):
+			path = [a[0], a[1], a[2], a[3]]

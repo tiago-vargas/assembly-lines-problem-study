@@ -6,6 +6,8 @@ class AssemblyLine:
 	def __getitem__(self, index) -> str | None:
 		if 0 <= index < self.n:
 			return f'{self.name}_{index}'
+		else:
+			raise IndexError(f'Expected indices: [0, {self.n - 1}]; got {index}')
 
 
 def _are_consecutive(numbers: list[int]) -> bool:
