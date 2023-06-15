@@ -18,6 +18,13 @@ class TestPathChecker:
 
 		assert not system.is_valid(path)
 
+	def test_system_single_line_with_nodes_in_wrong_order(self):
+		a = AssemblyLine(name='A', nodes=5)
+		path = [a[2], a[0], a[4], a[1], a[3]]
+		system = System(assembly_lines=[a])
+
+		assert not system.is_valid(path)
+
 	def test_raising_error_when_invalid_subscript(self):
 		a = AssemblyLine(name='A', nodes=3)
 
