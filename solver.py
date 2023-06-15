@@ -1,6 +1,11 @@
 class AssemblyLine:
 	def __init__(self, name: str, n: int) -> None:
-		pass
+		self.name = name
+		self.n = n
+
+	def __getitem__(self, index) -> str | None:
+		if 0 <= index < self.n:
+			return f'{self.name}_{index}'
 
 
 def _are_consecutive(numbers: list[int]) -> bool:
@@ -19,7 +24,7 @@ def _are_consecutive(numbers: list[int]) -> bool:
 
 class System:
 	def __init__(self, assembly_lines: list[AssemblyLine]) -> None:
-		pass
+		self.assembly_lines = assembly_lines
 
 	def is_valid(self, path: list[str]) -> bool:
 		indices = []
