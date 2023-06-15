@@ -68,3 +68,13 @@ class TestPathValidator:
 			with pytest.raises(DifferentNumberOfNodesError):
 				system = System(assembly_lines=[a, b])
 
+	class TestSystemWithThreeAssemblyLines:
+		def test_jumping_to_non_adjacent_nodes(self):
+			a = AssemblyLine(name='A', nodes=4)
+			b = AssemblyLine(name='B', nodes=4)
+			c = AssemblyLine(name='C', nodes=4)
+			system = System(assembly_lines=[a, b, c])
+
+			path = [a[0], b[1], a[2], c[3]]  # a[2] -> c[3] is forbidden
+
+			assert not system.is_valid(path)

@@ -51,11 +51,38 @@ class System:
 			index = int(index)
 			indices.append(index)
 
+		line_name_sequence = []
+		for string in path:
+			name = string.split('_')[0]
+			line_name_sequence.append(name)
+
+		line_index_sequence = []
+		for name in line_name_sequence:
+			assembly_line_names = [x.name for x in self.assembly_lines]
+			index = assembly_line_names.index(name)
+			line_index_sequence.append(index)
+
+		if not self.are_jumps_adjacent(line_index_sequence):
+			return False
+
 		have_as_many_items_as_there_are_nodes = (len(path) == self.assembly_lines[0].nodes)
 		if _are_consecutive(indices) and have_as_many_items_as_there_are_nodes:
 			return True
 		else:
 			return False
+
+	def are_jumps_adjacent(self, line_index_sequence):
+		if line_index_sequence == []:
+			return True
+
+		previous_index = line_index_sequence[0]
+		for index in line_index_sequence[1:]:
+			if previous_index - 1 > index or index > previous_index + 1:
+				return False
+			# Defer:
+			previous_index = index
+
+		return True
 
 
 class DifferentNumberOfNodesError(Exception):
