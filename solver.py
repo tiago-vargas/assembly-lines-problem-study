@@ -1,7 +1,7 @@
 class AssemblyLine:
-	def __init__(self, name: str, n: int) -> None:
+	def __init__(self, name: str, nodes: int) -> None:
 		self.name = name
-		self.n = n
+		self.n = nodes
 
 	def __getitem__(self, index) -> str | None:
 		if 0 <= index < self.n:
