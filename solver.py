@@ -1,13 +1,13 @@
 class AssemblyLine:
 	def __init__(self, name: str, nodes: int) -> None:
 		self.name = name
-		self.n = nodes
+		self.nodes = nodes
 
 	def __getitem__(self, index) -> str | None:
-		if 0 <= index < self.n:
+		if 0 <= index < self.nodes:
 			return f'{self.name}_{index}'
 		else:
-			raise IndexError(f'Expected indices: [0, {self.n - 1}]; got {index}')
+			raise IndexError(f'Expected indices: [0, {self.nodes - 1}]; got {index}')
 
 
 def _are_consecutive(numbers: list[int]) -> bool:
@@ -35,8 +35,8 @@ class System:
 			index = int(index)
 			indices.append(index)
 
-		are_in_bounds = (len(path) == self.assembly_lines[0].n)
-		if _are_consecutive(indices) and are_in_bounds:
+		have_as_many_items_as_there_are_nodes = (len(path) == self.assembly_lines[0].nodes)
+		if _are_consecutive(indices) and have_as_many_items_as_there_are_nodes:
 			return True
 		else:
 			return False
