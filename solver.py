@@ -35,7 +35,8 @@ class System:
 			index = int(index)
 			indices.append(index)
 
-		if _are_consecutive(indices):
+		are_in_bounds = (len(path) == self.assembly_lines[0].n)
+		if _are_consecutive(indices) and are_in_bounds:
 			return True
 		else:
 			return False
