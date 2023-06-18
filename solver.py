@@ -1,3 +1,6 @@
+from typing import Callable, TypeVar
+
+
 class AssemblyLine:
 	def __init__(self, name: str, nodes: int) -> None:
 		self.name = name
@@ -10,39 +13,13 @@ class AssemblyLine:
 			raise IndexError(f'Expected indices for {self.name}: [0, {self.nodes - 1}]; got {index}')
 
 
-def _are_consecutive(numbers: list[int]) -> bool:
-	if numbers == []:
-		return True
-
-	previous_n = numbers[0]
-	for n in numbers[1:]:
-		if n != previous_n + 1:
-			return False
-		# Defer:
-		previous_n = n
-
-	return True
-
-
 class System:
 	def __init__(self, assembly_lines: list[AssemblyLine]) -> None:
 		self.assembly_lines = assembly_lines
 
-		if not self._are_lines_of_the_same_length():
+		are_assembly_lines_of_the_same_length = obeys_pattern(self.assembly_lines, lambda x, y: x.nodes == y.nodes)
+		if not are_assembly_lines_of_the_same_length:
 			raise DifferentNumberOfNodesError
-
-	def _are_lines_of_the_same_length(self):
-		if self.assembly_lines == []:
-			return True
-
-		previous_line = self.assembly_lines[0]
-		for line in self.assembly_lines[1:]:
-			if line.nodes != previous_line.nodes:
-				return False
-			# Defer:
-			previous_line = line
-
-		return True
 
 	def is_valid(self, path: list[str]) -> bool:
 		indices = []
@@ -62,27 +39,33 @@ class System:
 			index = assembly_line_names.index(name)
 			line_index_sequence.append(index)
 
-		if not self.are_jumps_adjacent(line_index_sequence):
+		are_transitions_adjacent = obeys_pattern(line_index_sequence, lambda x, y: y - 1 <= x <= y + 1)
+		if not are_transitions_adjacent:
 			return False
 
+		indices_are_in_succession = obeys_pattern(indices, lambda x, y: x == y + 1)
 		have_as_many_items_as_there_are_nodes = (len(path) == self.assembly_lines[0].nodes)
-		if _are_consecutive(indices) and have_as_many_items_as_there_are_nodes:
+		if indices_are_in_succession and have_as_many_items_as_there_are_nodes:
 			return True
 		else:
 			return False
 
-	def are_jumps_adjacent(self, line_index_sequence):
-		if line_index_sequence == []:
-			return True
 
-		previous_index = line_index_sequence[0]
-		for index in line_index_sequence[1:]:
-			if previous_index - 1 > index or index > previous_index + 1:
-				return False
-			# Defer:
-			previous_index = index
+T = TypeVar('T')
 
+
+def obeys_pattern(sequence: list[T], criteria: Callable[[T, T], bool]) -> bool:
+	if sequence == []:
 		return True
+
+	previous_value = sequence[0]
+	for value in sequence[1:]:
+		if not criteria(value, previous_value):
+			return False
+		# Defer:
+		previous_value = value
+
+	return True
 
 
 class DifferentNumberOfNodesError(Exception):
