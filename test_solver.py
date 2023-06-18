@@ -33,7 +33,7 @@ class TestPathValidator:
 			a = AssemblyLine(name='A', nodes=3)
 
 			with pytest.raises(IndexError):
-				path = [a[0], a[1], a[2], a[3]]
+				_path = [a[0], a[1], a[2], a[3]]
 
 		def test_classifying_path_with_too_few_nodes_as_invalid(self):
 			a = AssemblyLine(name='A', nodes=10)
@@ -66,7 +66,7 @@ class TestPathValidator:
 			b = AssemblyLine(name='B', nodes=6)
 
 			with pytest.raises(DifferentNumberOfNodesError):
-				system = System(assembly_lines=[a, b])
+				_system = System(assembly_lines=[a, b])
 
 	class TestSystemWithThreeAssemblyLines:
 		def test_jumping_to_non_adjacent_nodes(self):
