@@ -26,7 +26,44 @@ class IterativeSystem:
 
 
 class IterativeSystem3:
-	pass
+	def __init__(self, entries: list[int], stations: list[list[int]], transitions_1_2: list[list[int]], transitions_2_3: list[list[int]], exits: list[int]) -> None:
+		self.entries = entries
+		self.stations = stations
+		self.transitions_1_2 = transitions_1_2
+		self.transitions_2_3 = transitions_2_3
+		self.exits = exits
+
+		n = len(self.stations[0])
+		self.memoire = [[-1] * n, [-1] * n, [-1] * n]
+
+	def get_optimal_time(self) -> int:
+		n = len(self.stations[0])
+		for index in range(0, n):
+			for line in [0, 1, 2]:
+				self.memoire[line][index] = self.get_optimal_time_to_get_to_station(line, index)
+
+		last_station_index = n - 1
+		return min(self.memoire[0][last_station_index] + self.exits[0],
+				   self.memoire[1][last_station_index] + self.exits[1],
+				   self.memoire[2][last_station_index] + self.exits[2])
+
+	def get_optimal_time_to_get_to_station(self, line: int, index: int) -> int:
+		if index == 0:
+			return self.entries[line] + self.stations[line][index]
+		else:
+			if line == 0:
+				return min(self.memoire[line][index - 1],
+				           self.memoire[1][index - 1] + self.transitions_1_2[1][index - 1]) \
+				       + self.stations[line][index]
+			elif line == 1:
+				return min(self.memoire[0][index - 1] + self.transitions_1_2[0][index - 1],
+				           self.memoire[line][index - 1],
+				           self.memoire[2][index - 1] + self.transitions_2_3[2][index - 1]) \
+				       + self.stations[line][index]
+			else:
+				return min(self.memoire[line][index - 1],
+				           self.memoire[1][index - 1] + self.transitions_2_3[1][index - 1]) \
+				       + self.stations[line][index]
 
 
 class RecursiveSystem:
