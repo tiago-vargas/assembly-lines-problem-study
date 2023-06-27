@@ -15,7 +15,7 @@ class IterativeSystem:
 				self.memoire[line][index] = self.get_optimal_time_to_get_to_station(line, index)
 
 		return min(self.memoire[0][n - 1] + self.exits[0],
-				   self.memoire[1][n - 1] + self.exits[1])
+		           self.memoire[1][n - 1] + self.exits[1])
 
 	def get_optimal_time_to_get_to_station(self, line: int, index: int) -> int:
 		if index == 0:
@@ -23,6 +23,13 @@ class IterativeSystem:
 		else:
 			other_line = 1 - line
 			return min(self.memoire[line][index - 1], self.memoire[other_line][index - 1] + self.transitions[other_line][index - 1]) + self.stations[line][index]
+
+	# TODO: Annotate
+	def traceback(self, line, index, choices) -> list:
+		if index == 0:
+			return [(line, 0)]
+
+		return self.traceback(choices[line][index], index - 1, choices) + [(line, index)]
 
 
 class IterativeSystem3:
@@ -76,12 +83,17 @@ class RecursiveSystem:
 		any_of_the_stations = self.stations[0]
 		n = len(any_of_the_stations)
 		self.memoire = [[-1] * n, [-1] * n]
+		self.choices = [[-1] * n, [-1] * n]
 
-	def get_optimal_time(self) -> int:
+	def get_optimal_time(self) -> tuple[int, list[tuple[int, int]]]:
 		n = len(self.stations[0])
 		last_station_index = n - 1
-		return min(self.optimal_time_to_get_to_station(0, last_station_index) + self.exits[0],
-		           self.optimal_time_to_get_to_station(1, last_station_index) + self.exits[1])
+		a = self.optimal_time_to_get_to_station(0, last_station_index) + self.exits[0]
+		b = self.optimal_time_to_get_to_station(1, last_station_index) + self.exits[1]
+		if a < b:
+			return a, self.traceback(0, last_station_index)
+		else:
+			return b, self.traceback(1, last_station_index)
 
 	def optimal_time_to_get_to_station(self, line: int, index: int) -> int:
 		if self.memoire[line][index] != -1:
@@ -92,10 +104,22 @@ class RecursiveSystem:
 			self.memoire[line][index] = self.entries[line] + self.stations[line][0]
 		else:
 			other_line = 1 - line
-			self.memoire[line][index] = min(self.optimal_time_to_get_to_station(line, index - 1) + self.stations[line][index],
-			                                self.optimal_time_to_get_to_station(other_line, index - 1) + self.transitions[other_line][index - 1] + self.stations[line][index])
+			a = self.optimal_time_to_get_to_station(line, index - 1) + self.stations[line][index]
+			b = self.optimal_time_to_get_to_station(other_line, index - 1) + self.transitions[other_line][index - 1] + self.stations[line][index]
+			self.memoire[line][index] = min(a, b)
+
+			if a < b:
+				self.choices[line][index] = line
+			else:
+				self.choices[line][index] = 1 - line
 
 		return self.memoire[line][index]
+
+	def traceback(self, line, index) -> list[tuple[int, int]]:
+		if index == 0:
+			return [(line, 0)]
+		else:
+			return self.traceback(self.choices[line][index], index - 1) + [(line, index)]
 
 
 class RecursiveSystem3:
